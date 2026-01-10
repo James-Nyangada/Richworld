@@ -26,7 +26,7 @@ const reey = localFont({
 })
 
 export const metadata = {
-  title: "Richworld Safaris | Magic Redefined| Best Travel & Tour Company in Kenya | African Safari Packages",
+  title: "Richworld Safaris | Magic Redefined|The Best Travel & Tour Company in Kenya | African Safari Packages",
   description: "Discover Kenya with Richworld Safaris a trusted travel and tour company in Kenya offering African safari packages, holiday tours, and adventure travel across Africa.",
   keywords: "travel and tour company Kenya, African safari packages, Kenya safaris, best travel agency Kenya, top tour company Africa, Richworld Safaris",
   generator: "estetica-agency",
