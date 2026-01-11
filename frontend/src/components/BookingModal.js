@@ -51,7 +51,8 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
             paymentPreference
         }
 
-        const res = await axios.post('/api/bookings', payload)
+        const API = process.env.NEXT_PUBLIC_API_URL || '';
+        const res = await axios.post(`${API}/api/bookings`, payload)
         
         if (res.data.redirect_url) {
             // Pay Now: Redirect to Pesapal
