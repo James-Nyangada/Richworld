@@ -29,13 +29,11 @@ exports.createBooking = async (req, res) => {
     
     await booking.save()
 
-    // Send standard booking emails (Non-blocking)
-    try {
-        await sendBookingConfirmation(booking.email, booking)
-        // await sendBookingNotification(process.env.COMPANY_EMAIL, booking)
-    } catch (emailErr) {
-        console.error("Email Sending Failed:", emailErr.message)
-    }
+    // Send standard booking emails (Non-blocking / Fire-and-forget)
+    sendBookingConfirmation(booking.email, booking)
+        .catch(emailErr => console.error("Email Sending Failed (Background):", emailErr.message));
+        
+    // sendBookingNotification(process.env.COMPANY_EMAIL, booking).catch(err => console.error("Admin Email Failed:", err.message));
 
     if (paymentPreference === 'pay-now') {
         // Initiate Paystack Payment
