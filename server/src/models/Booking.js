@@ -68,6 +68,9 @@ const bookingSchema = new mongoose.Schema(
     pesapalTrackingId: {
       type: String,
     },
+    paystackReference: {
+      type: String,
+    },
   },
   { timestamps: true }
 )

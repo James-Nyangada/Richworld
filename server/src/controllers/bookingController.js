@@ -1,6 +1,6 @@
 const Booking = require("../models/Booking")
 const { sendBookingConfirmation, sendBookingNotification, sendPaymentLinkEmail } = require("../utilities/emailService")
-const PesapalService = require("../services/pesapalService")
+const PaystackService = require("../services/paystackService")
 
 // Get all bookings
 exports.getAllBookings = async (req, res) => {
@@ -24,11 +24,9 @@ exports.createBooking = async (req, res) => {
         ...bookingData,
         amount: amount, // Assumes frontend sends amount, or calculate here
         paymentStatus: 'pending',
-        paymentMethod: paymentPreference === 'pay-now' ? 'Online' : 'Unspecified' 
+        paymentMethod: paymentPreference === 'pay-now' ? 'Paystack' : 'Unspecified' 
     })
     
-    await booking.save()
-
     await booking.save()
 
     // Send standard booking emails (Non-blocking)
@@ -40,28 +38,27 @@ exports.createBooking = async (req, res) => {
     }
 
     if (paymentPreference === 'pay-now') {
-        // Initiate Pesapal Payment
+        // Initiate Paystack Payment
         try {
-            const result = await PesapalService.submitOrder({
+            const result = await PaystackService.initializePayment({
                 amount: amount,
                 email: booking.email,
-                phone: booking.phone,
-                name: booking.fullName,
-                ref: booking._id.toString()
+                ref: booking._id.toString(),
+                callbackUrl: `${process.env.APP_BASE_URL}/payment/success` // Where user goes after payment
             });
 
             // Update booking with tracking ID
-            booking.pesapalTrackingId = result.order_tracking_id;
+            booking.paystackReference = result.reference;
             await booking.save();
 
             return res.status(201).json({ 
                 message: "Booking created, redirecting to payment", 
                 booking,
-                redirect_url: result.redirect_url 
+                redirect_url: result.authorization_url 
             })
-        } catch (pesapalErr) {
-            console.error("PesaPal Error:", pesapalErr.message);
-            // Even if PesaPal fails, the booking is created
+        } catch (paystackErr) {
+            console.error("Paystack Error:", paystackErr.message);
+            // Even if Paystack fails, the booking is created
             return res.status(201).json({ 
                 message: "Booking created but payment initiation failed. Please contact support.", 
                 booking 
@@ -94,24 +91,23 @@ exports.initiatePayment = async (req, res) => {
         const booking = await Booking.findById(req.params.id);
         if (!booking) return res.status(404).json({ error: "Booking not found" });
 
-        const result = await PesapalService.submitOrder({
+        const result = await PaystackService.initializePayment({
             amount: booking.amount,
             email: booking.email,
-            phone: booking.phone,
-            name: booking.fullName,
-            ref: booking._id.toString()
+            ref: booking._id.toString(),
+            callbackUrl: `${process.env.APP_BASE_URL}/payment/success`
         });
 
-        booking.pesapalTrackingId = result.order_tracking_id;
+        booking.paystackReference = result.reference;
         await booking.save();
 
         // If request expects JSON (frontend retry), return JSON.
         // If request is from Email Link (browser), Redirect.
         const acceptHeader = req.headers.accept || "";
         if (acceptHeader.includes("application/json")) {
-            return res.json({ redirect_url: result.redirect_url });
+            return res.json({ redirect_url: result.authorization_url });
         } else {
-            return res.redirect(result.redirect_url);
+            return res.redirect(result.authorization_url);
         }
 
     } catch (error) {
@@ -138,4 +134,3 @@ exports.updateBookingStatus = async (req, res) => {
     res.status(400).json({ error: err.message })
   }
 }
-  

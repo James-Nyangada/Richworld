@@ -195,7 +195,7 @@ export default function PackageDetailPage() {
                  <div className="mt-6 pt-6 border-t border-gray-100">
                     <h4 className="font-semibold mb-2">Need Help?</h4>
                      <p className="text-sm text-gray-500 mb-1">Call us 24/7</p>
-                    <a href="tel:+254123456789" className="text-blue-600 font-medium">+254 700 000 000</a>
+                    <a href="tel:+254706770371" className="text-blue-600 font-medium">+254 706 770 371</a>
                 </div>
             </div>
           </div>

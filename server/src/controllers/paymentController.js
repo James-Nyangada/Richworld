@@ -1,39 +1,38 @@
-const PesapalService = require('../services/pesapalService');
+const PaystackService = require('../services/paystackService');
 const Booking = require('../models/Booking'); 
+const crypto = require('crypto');
 
-// GET /api/payments/ipn (The Webhook)
-exports.handleIPN = async (req, res) => {
-    const { OrderTrackingId, OrderMerchantReference } = req.query;
+// POST /api/pay/webhook
+// Paystack sends a POST request here when payment status changes
+exports.webhook = async (req, res) => {
+    // 1. Validate Signature (Security)
+    const secret = process.env.PAYSTACK_SECRET_KEY;
+    if (!secret) return res.status(500).send("Server Misconfigured");
 
-    console.log(`IPN Received for Booking: ${OrderMerchantReference}`);
+    const hash = crypto.createHmac('sha512', secret)
+                       .update(JSON.stringify(req.body))
+                       .digest('hex');
 
-    try {
-        // 1. Verify Status with PesaPal
-        const statusData = await PesapalService.getTransactionStatus(OrderTrackingId);
-        const { payment_status_description } = statusData;
-
-        // 2. Update MongoDB
-        if (payment_status_description === "Completed") {
-            await Booking.findByIdAndUpdate(OrderMerchantReference, { 
-                paymentStatus: 'paid',
-                paymentMethod: statusData.payment_method || 'Online' 
-            });
-            console.log(`Booking ${OrderMerchantReference} updated to PAID`);
-        } else if (payment_status_description === "Failed") {
-            await Booking.findByIdAndUpdate(OrderMerchantReference, { paymentStatus: 'failed' });
-        }
-
-        // 3. Acknowledge Receipt to PesaPal
-        // Must return this exact JSON structure to stop PesaPal from retrying
-        res.json({
-            orderNotificationType: "GET",
-            orderTrackingId: OrderTrackingId,
-            orderMerchantReference: OrderMerchantReference,
-            status: 200
-        });
-
-    } catch (error) {
-        console.error("IPN Error:", error);
-        res.status(500).send("Error processing IPN");
+    if (hash !== req.headers['x-paystack-signature']) {
+        return res.status(400).send('Invalid Signature');
     }
+
+    // 2. Process Event
+    const event = req.body;
+    if (event.event === 'charge.success') {
+        const { reference } = event.data;
+        
+        console.log(`Payment Successful for Booking: ${reference}`);
+        
+        try {
+            await Booking.findByIdAndUpdate(reference, { 
+                paymentStatus: 'paid',
+                paymentMethod: event.data.channel, // 'card' or 'mobile_money'
+            });
+        } catch (err) {
+            console.error("Error updating booking:", err);
+        }
+    }
+
+    res.sendStatus(200); // Always return 200 OK
 };

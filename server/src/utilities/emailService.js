@@ -84,12 +84,6 @@ async function sendPaymentLinkEmail(to, booking, paymentLink) {
         <p>Thank you for booking <strong>${booking.selectedPackage}</strong>.</p>
         <p>To confirm your booking, please complete the payment using the link below:</p>
         
-        <div style="text-align: center; margin: 30px 0;">
-            <a href="${paymentLink}" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Pay Now</a>
-        </div>
-
-        <p>Or copy this link into your browser:</p>
-        <p><a href="${paymentLink}">${paymentLink}</a></p>
         
         <p><strong>Booking Details:</strong></p>
         <ul>

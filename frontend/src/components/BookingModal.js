@@ -208,7 +208,7 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
                             >
                                 <CreditCard className={`mb-2 ${paymentPreference === 'pay-now' ? 'text-blue-600' : 'text-gray-400'}`} />
                                 <span className="font-semibold text-sm">Pay Now</span>
-                                <span className="text-xs text-gray-500">M-Pesa / Card</span>
+                                <span className="text-xs text-gray-500">Paystack (M-Pesa / Card)</span>
                             </div>
                             <div 
                                 onClick={() => setPaymentPreference('pay-later')}
