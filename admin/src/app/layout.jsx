@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Richworld Safaris Admin",
-  description: "Richworld Safaris Admin",
+  description: "Richworld Safaris Admin Dashboard",
 };
 
 export default function RootLayout({ children }) {
