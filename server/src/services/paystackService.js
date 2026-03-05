@@ -17,12 +17,15 @@ const api = axios.create({
  */
 exports.initializePayment = async (data) => {
     try {
-        const { amount, email, ref, callbackUrl } = data;
+        const { amount, email, ref, callbackUrl, phone } = data;
+
+        // Generate unique reference per attempt to avoid Paystack duplicate reference errors
+        const uniqueRef = `${ref}_${Date.now()}`;
 
         const response = await api.post('/transaction/initialize', {
             email: email,
             amount: Math.ceil(amount * 100), // CRITICAL: Convert to kobo/cents. Using Math.ceil to avoid floating point issues
-            reference: ref, // Your Unique Order ID
+            reference: uniqueRef, // Unique per payment attempt
             currency: 'KES',
             callback_url: callbackUrl, // Where user goes after payment
             channels: ['card', 'mobile_money'], // Explicitly allow M-Pesa & Card
@@ -32,6 +35,11 @@ exports.initializePayment = async (data) => {
                         display_name: "Order ID",
                         variable_name: "order_id",
                         value: ref
+                    },
+                    {
+                        display_name: "Phone Number",
+                        variable_name: "phone_number",
+                        value: phone || ""
                     }
                 ]
             }

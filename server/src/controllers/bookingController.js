@@ -42,7 +42,8 @@ exports.createBooking = async (req, res) => {
                 amount: amount,
                 email: booking.email,
                 ref: booking._id.toString(),
-                callbackUrl: `${process.env.APP_BASE_URL}/payment/success` // Where user goes after payment
+                callbackUrl: `${process.env.APP_BASE_URL}/payment/success`, // Where user goes after payment
+                phone: booking.phone
             });
 
             // Update booking with tracking ID
@@ -65,7 +66,8 @@ exports.createBooking = async (req, res) => {
     } else {
         // Pay Later: Send Payment Link
         try {
-             const paymentLink = `${process.env.APP_BASE_URL}/api/bookings/${booking._id}/pay`;
+             const serverUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 4000}`;
+             const paymentLink = `${serverUrl}/api/bookings/${booking._id}/pay`;
              await sendPaymentLinkEmail(booking.email, booking, paymentLink);
         } catch (linkErr) {
              console.error("Payment Link Email Failed:", linkErr.message)
@@ -93,7 +95,8 @@ exports.initiatePayment = async (req, res) => {
             amount: booking.amount,
             email: booking.email,
             ref: booking._id.toString(),
-            callbackUrl: `${process.env.APP_BASE_URL}/payment/success`
+            callbackUrl: `${process.env.APP_BASE_URL}/payment/success`,
+            phone: booking.phone
         });
 
         booking.paystackReference = result.reference;

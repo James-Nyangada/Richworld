@@ -82,15 +82,27 @@ async function sendPaymentLinkEmail(to, booking, paymentLink) {
         <h2 style="color: #4f46e5;">Complete Your Booking Payment 💳</h2>
         <p>Hello ${booking.fullName},</p>
         <p>Thank you for booking <strong>${booking.selectedPackage}</strong>.</p>
-        <p>To confirm your booking, please complete the payment using the link below:</p>
+        <p>To confirm your booking, please complete the payment using the button below:</p>
         
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${paymentLink}" 
+             style="display: inline-block; background-color: #16a34a; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 16px; font-weight: bold;">
+            Pay KES ${booking.amount?.toLocaleString() || '0'} Now
+          </a>
+        </div>
+
+        <p style="font-size: 13px; color: #666;">If the button above doesn't work, copy and paste this link into your browser:</p>
+        <p style="font-size: 13px; word-break: break-all;"><a href="${paymentLink}">${paymentLink}</a></p>
         
         <p><strong>Booking Details:</strong></p>
         <ul>
           <li><strong>Booking ID:</strong> ${booking.bookingId}</li>
-          <li><strong>Amount:</strong> KES ${booking.amount}</li>
+          <li><strong>Package:</strong> ${booking.selectedPackage}</li>
+          <li><strong>Amount:</strong> KES ${booking.amount?.toLocaleString() || '0'}</li>
+          <li><strong>Travel Date:</strong> ${new Date(booking.travelStartDate).toLocaleDateString()}</li>
         </ul>
-        <p style="margin-top: 20px;">If you have already paid, please ignore this email.</p>
+        <p style="margin-top: 20px;">This link does not expire — you can pay at any time.</p>
+        <p style="font-size: 12px; color: #666;">If you have already paid, please ignore this email.</p>
       </div>
     `
   
