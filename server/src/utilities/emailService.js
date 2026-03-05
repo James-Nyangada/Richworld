@@ -6,7 +6,12 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  pool: true,               // Reuse connections for multiple emails
+  maxConnections: 3,         // Max simultaneous connections
+  connectionTimeout: 10000,  // 10s to establish connection
+  greetingTimeout: 10000,    // 10s for SMTP greeting
+  socketTimeout: 15000,      // 15s for socket inactivity
 });
 
 // Verify connection configuration
