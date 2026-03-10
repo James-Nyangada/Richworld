@@ -29,11 +29,33 @@ exports.createBooking = async (req, res) => {
     
     await booking.save()
 
-    // Send standard booking emails (Non-blocking / Fire-and-forget)
-    sendBookingConfirmation(booking.email, booking)
-        .catch(emailErr => console.error("Email Sending Failed (Background):", emailErr.message));
-        
-    // sendBookingNotification(process.env.COMPANY_EMAIL, booking).catch(err => console.error("Admin Email Failed:", err.message));
+    // Send standard booking emails — staggered to respect Resend 2 req/s rate limit
+    const delay = (ms) => new Promise(r => setTimeout(r, ms));
+
+    // Fire emails in background with 1.5s spacing
+    (async () => {
+      try {
+        await sendBookingConfirmation(booking.email, booking);
+        console.log(`✅ Booking confirmation sent to ${booking.email}`);
+      } catch (err) { console.error("Email Sending Failed (Background):", err.message); }
+
+      await delay(1500);
+
+      try {
+        await sendBookingNotification(process.env.COMPANY_EMAIL, booking);
+        console.log(`✅ Admin notification sent to ${process.env.COMPANY_EMAIL}`);
+      } catch (err) { console.error("Admin Email Failed:", err.message); }
+
+      if (paymentPreference !== 'pay-now') {
+        await delay(1500);
+        const serverUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 4000}`;
+        const paymentLink = `${serverUrl}/api/bookings/${booking._id}/pay`;
+        try {
+          await sendPaymentLinkEmail(booking.email, booking, paymentLink);
+          console.log(`✅ Payment link email sent to ${booking.email}`);
+        } catch (err) { console.error("Payment Link Email Failed:", err.message); }
+      }
+    })();
 
     if (paymentPreference === 'pay-now') {
         // Initiate Paystack Payment
@@ -64,14 +86,7 @@ exports.createBooking = async (req, res) => {
             })
         }
     } else {
-        // Pay Later: Send Payment Link (Non-blocking / Fire-and-forget)
-        const serverUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 4000}`;
-        const paymentLink = `${serverUrl}/api/bookings/${booking._id}/pay`;
-        
-        sendPaymentLinkEmail(booking.email, booking, paymentLink)
-            .then(() => console.log(`✅ Payment link email sent to ${booking.email}`))
-            .catch(linkErr => console.error("Payment Link Email Failed:", linkErr.message));
-
+        // Pay Later: response sent immediately, payment link email handled by staggered queue above
         return res.status(201).json({ 
             message: "Booking created. Payment link sent to email.", 
             booking 

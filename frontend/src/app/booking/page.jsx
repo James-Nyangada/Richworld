@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 
 export default function BookingPage() {
+  const API = process.env.NEXT_PUBLIC_API_URL || ''
 const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     fullName: "",
@@ -26,7 +27,7 @@ const [currentStep, setCurrentStep] = useState(1)
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/packages")
+        const res = await fetch(`${API}/api/packages`)
         const data = await res.json()
         setPackages(data)
       } catch (err) {
@@ -54,7 +55,7 @@ const [currentStep, setCurrentStep] = useState(1)
   const handleReserve = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch("http://localhost:4000/api/bookings", {
+      const res = await fetch(`${API}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, payment_status: "unpaid" }),
@@ -80,7 +81,7 @@ const [currentStep, setCurrentStep] = useState(1)
 
     try {
       // 1️⃣ Save booking first to get bookingId
-      const bookingRes = await fetch("http://localhost:4000/api/bookings", {
+      const bookingRes = await fetch(`${API}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, payment_status: "pending" }),
@@ -90,7 +91,7 @@ const [currentStep, setCurrentStep] = useState(1)
       const booking = await bookingRes.json()
 
       // 2️⃣ Trigger M-Pesa STK Push
-      const stkRes = await fetch("http://localhost:4000/api/mpesa/stkpush", {
+      const stkRes = await fetch(`${API}/api/mpesa/stkpush`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -110,7 +111,7 @@ const [currentStep, setCurrentStep] = useState(1)
 
       // 3️⃣ Poll payment status (simple example)
       setTimeout(async () => {
-        const statusRes = await fetch(`http://localhost:4000/api/mpesa/check-payment/${booking._id}`)
+        const statusRes = await fetch(`${API}/api/mpesa/check-payment/${booking._id}`)
         const statusData = await statusRes.json()
 
         if (statusData.payment_status === "paid") {
