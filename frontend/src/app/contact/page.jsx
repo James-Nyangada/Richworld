@@ -196,7 +196,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 mb-2">Our Office</h4>
-                  <p className="text-gray-600">Unafric House Koinange street Nairobi</p>
+                  <p className="text-gray-600">Biashara street Laxmi plaza building 
+3rd floor RM 9</p>
                 </div>
               </div>
             </motion.div>
@@ -212,7 +213,7 @@ export default function ContactPage() {
         transition={{ duration: 0.8, delay: 0.8 }}
       >
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3178.5899197301856!2d36.815088473771205!3d-1.2824996987053043!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d3b9a0bfef%3A0x742b7ba0a98ad2ba!2sUniafric%20House%2C%2025%2C%20Nairobi!5e1!3m2!1sen!2ske!4v1757760779077!5m2!1sen!2ske"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.819366831776!2d36.820513280758!3d-1.282161614724665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f11d6fe5424f5%3A0x601846b4dc96a1a4!2sLAXMI%20PLAZA!5e0!3m2!1sen!2ske!4v1773241296772!5m2!1sen!2ske"
           width="100%"
           height="100%"
           style={{ border: 0 }}
