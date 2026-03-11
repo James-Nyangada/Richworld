@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next"
 import Navbar from "../components/layout/Navbar"
 import Footer from "../components/layout/Footer"
 import "./globals.css"
+import { Toaster } from "react-hot-toast"
 import { Suspense } from "react"
 import WhatsAppButton from "@/components/layout/WhatsAppButton"
 
@@ -42,6 +43,7 @@ export default function RootLayout({ children }) {
           <Footer />
           <WhatsAppButton />
         </Suspense>
+        <Toaster position="top-right" />
         <Analytics debug={false} />
       </body>
     </html>

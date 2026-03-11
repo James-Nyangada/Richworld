@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
+import { toast } from "react-hot-toast"
 
 export default function BookingPage() {
   const API = process.env.NEXT_PUBLIC_API_URL || ''
@@ -11,8 +12,8 @@ const [currentStep, setCurrentStep] = useState(1)
     email: "",
     phone: "",
     selectedPackage: "",
-    numberOfAdults: "",
-    numberOfChildren: "",
+    numberOfAdults: "1",
+    numberOfChildren: "0",
     travelStartDate: "",
     travelEndDate: "",
     specialRequests: "",
@@ -51,81 +52,57 @@ const [currentStep, setCurrentStep] = useState(1)
     }
   }
 
-  // 🔹 Reserve booking (no payment)
-  const handleReserve = async (e) => {
+  // 🔹 Handle Booking Submission
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    try {
-      const res = await fetch(`${API}/api/bookings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, payment_status: "unpaid" }),
-      })
-      if (res.ok) {
-        alert("Booking reserved successfully ✅")
-        resetForm()
-      } else {
-        const errData = await res.json()
-        alert("Failed to reserve booking ❌: " + (errData.message || "Unknown error"))
-      }
-    } catch (err) {
-      console.error("Booking error:", err)
-      alert("Something went wrong ❌. Please try again.")
-    }
-  }
-
-  // 🔹 Pay now (with M-Pesa)
-  const handlePayNow = async (e) => {
-    e.preventDefault()
-    if (!selectedPackagePrice) return alert("Please select a package first.")
+    if (!selectedPackagePrice) return toast.error("Please select a package first.")
     setProcessingPayment(true)
 
     try {
-      // 1️⃣ Save booking first to get bookingId
-      const bookingRes = await fetch(`${API}/api/bookings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, payment_status: "pending" }),
-      })
+      // Calculate total amount
+      const adults = parseInt(formData.numberOfAdults) || 0
+      const children = parseInt(formData.numberOfChildren) || 0
+      const totalTravelers = adults + children
+      // The price should be per person
+      const totalAmount = selectedPackagePrice * totalTravelers
 
-      if (!bookingRes.ok) throw new Error("Failed to create booking before payment.")
-      const booking = await bookingRes.json()
+      // Find the actual package name for the backend payload
+      const selectedPkg = packages.find(p => p._id === formData.selectedPackage);
+      const packageName = selectedPkg ? selectedPkg.name : formData.selectedPackage;
 
-      // 2️⃣ Trigger M-Pesa STK Push
-      const stkRes = await fetch(`${API}/api/mpesa/stkpush`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phoneNumber: formData.phone,
-          amount: selectedPackagePrice,
-          bookingId: booking._id,
-        }),
-      })
-
-      const stkData = await stkRes.json()
-      if (stkRes.ok) {
-        alert("Please check your phone for M-Pesa prompt and enter your PIN.")
-        console.log("STK Push initiated:", stkData)
-      } else {
-        throw new Error(stkData.message || "STK push failed.")
+      const payload = {
+          ...formData,
+          selectedPackage: packageName, // Override ID with Name
+          amount: totalAmount,
+          paymentPreference: formData.paymentOption
       }
 
-      // 3️⃣ Poll payment status (simple example)
-      setTimeout(async () => {
-        const statusRes = await fetch(`${API}/api/mpesa/check-payment/${booking._id}`)
-        const statusData = await statusRes.json()
+      const res = await fetch(`${API}/api/bookings`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+      })
 
-        if (statusData.payment_status === "paid") {
-          alert("Payment successful! 🎉 Your booking is confirmed.")
+      const data = await res.json()
+
+      if (!res.ok) {
+          throw new Error(data.error || data.message || "Failed to process booking")
+      }
+
+      if (data.redirect_url) {
+          // Pay Now: Redirect to Paystack
+          window.location.href = data.redirect_url
+      } else {
+          // Pay Later: Show success message
+          toast.success("Booking successful! 🎉 " + (data.message || "Payment link sent to email."))
           resetForm()
-        } else {
-          alert("Payment not completed yet. Please check your M-Pesa app.")
-        }
-      }, 15000) // poll after 15s
+      }
+
     } catch (err) {
-      console.error("Payment error:", err)
-      alert("Payment process failed ❌: " + err.message)
+        console.error("Booking Error:", err)
+        toast.error("Booking process failed ❌: " + err.message)
     } finally {
-      setProcessingPayment(false)
+        setProcessingPayment(false)
     }
   }
 
@@ -259,7 +236,7 @@ const [currentStep, setCurrentStep] = useState(1)
 
           {/* Booking Form */}
           <motion.form
-            
+            onSubmit={handleSubmit}
             className="space-y-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -485,7 +462,7 @@ const [currentStep, setCurrentStep] = useState(1)
                     <p><span className="font-medium">Travel Dates:</span> {formData.travelStartDate} to {formData.travelEndDate}</p>
                     {selectedPackagePrice && (
                       <p className="text-lg font-bold text-orange-600">
-                        <span className="font-medium">Estimated Cost:</span> KES {selectedPackagePrice.toLocaleString()}
+                        <span className="font-medium">Estimated Cost:</span> KES {(selectedPackagePrice * ((parseInt(formData.numberOfAdults) || 0) + (parseInt(formData.numberOfChildren) || 0))).toLocaleString()}
                       </p>
                     )}
                   </div>
@@ -579,41 +556,20 @@ const [currentStep, setCurrentStep] = useState(1)
                   Next Step
                 </button>
               ) : (
-                <button
+                  <button
                   type="submit"
-                  disabled={!formData.paymentOption}
+                  disabled={!formData.paymentOption || processingPayment}
                   className={`px-12 py-4 rounded-xl font-semibold text-lg shadow-lg ml-auto transition-all duration-300 transform hover:scale-105 ${
-                    formData.paymentOption 
+                    formData.paymentOption && !processingPayment
                       ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700' 
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
                 >
-                  {formData.paymentOption === 'pay-now' ? 'Proceed to Payment' : 'Submit Booking Request'}
+                  {processingPayment ? 'Processing...' : formData.paymentOption === 'pay-now' ? 'Proceed to Payment' : 'Submit Booking Request'}
                 </button>
               )}
             </div>
           </motion.form>
-          {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row justify-between pt-8 gap-4">
-                <button
-                  type="button"
-                  onClick={handleReserve}
-                  disabled={processingPayment}
-                  className="flex-1 px-8 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors duration-300"
-                >
-                  Reserve Booking
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handlePayNow}
-                  disabled={processingPayment}
-                  className="flex-1 px-12 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 font-semibold text-lg shadow-lg"
-                >
-                  {processingPayment ? "Processing Payment..." : "Pay Now via M-Pesa"}
-                </button>
-              </div>
-
           {/* Additional Trust Signals */}
           <motion.div
             className="mt-16 text-center"

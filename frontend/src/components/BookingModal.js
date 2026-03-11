@@ -3,6 +3,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { X, Calendar, User, Mail, Phone, CreditCard, Clock } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { toast } from 'react-hot-toast'
 
 export default function BookingModal({ isOpen, onClose, packageDetails }) {
   const [formData, setFormData] = useState({
@@ -16,8 +17,6 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
   })
   const [paymentPreference, setPaymentPreference] = useState('pay-now') // pay-now, pay-later
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [message, setMessage] = useState('')
 
   if (!isOpen) return null
 
@@ -28,7 +27,6 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
 
     try {
         // Calculate travelEndDate
@@ -41,7 +39,7 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
         // Sanitize price (remove commas, currency symbols)
         const priceStr = String(packageDetails.price || "0").replace(/[^0-9.]/g, "")
         const unitPrice = parseFloat(priceStr) || 0
-        const totalAmount = unitPrice * parseInt(formData.numberOfAdults)
+        const totalAmount = unitPrice * (parseInt(formData.numberOfAdults) + parseInt(formData.numberOfChildren))
 
         const payload = {
             ...formData,
@@ -55,17 +53,19 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
         const res = await axios.post(`${API}/api/bookings`, payload)
         
         if (res.data.redirect_url) {
-            // Pay Now: Redirect to Pesapal
+            // Pay Now: Redirect to Pesapal/Paystack
             window.location.href = res.data.redirect_url
         } else {
             // Pay Later or success message
-            setSuccess(true)
-            setMessage(res.data.message)
+            toast.success("Booking Successful! " + (res.data.message || "Payment link sent to email."))
+            setTimeout(() => {
+                onClose()
+            }, 2000)
         }
 
     } catch (error) {
         console.error("Booking Error:", error)
-        setMessage("Booking failed. Please try again.")
+        toast.error("Booking failed. Please try again.")
     } finally {
         setLoading(false)
     }
@@ -85,30 +85,14 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
           exit={{ scale: 0.95, opacity: 0 }}
           className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden"
         >
-            {/* Header */}
             <div className="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
                 <h2 className="text-xl font-bold text-gray-900">Book {packageDetails?.name}</h2>
-                <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-700">
                     <X size={24} />
                 </button>
             </div>
 
-            {success ? (
-                <div className="p-8 text-center">
-                    <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                        <User className="h-6 w-6 text-green-600" />
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900">Booking Successful!</h3>
-                    <p className="mt-2 text-gray-500">{message}</p>
-                    <button 
-                        onClick={onClose}
-                        className="mt-6 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none sm:text-sm"
-                    >
-                        Close
-                    </button>
-                </div>
-            ) : (
-                <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
                     {/* Form Fields */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Full Name</label>
@@ -194,6 +178,17 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
                                 onChange={handleChange}
                             />
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Children</label>
+                            <input
+                                type="number"
+                                name="numberOfChildren"
+                                min="0"
+                                className="mt-1 block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                value={formData.numberOfChildren}
+                                onChange={handleChange}
+                            />
+                        </div>
                     </div>
 
                     {/* Payment Options */}
@@ -223,8 +218,6 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
                         </div>
                     </div>
 
-                     {message && <div className="text-red-500 text-sm text-center">{message}</div>}
-
                     <div className="pt-4">
                         <button
                             type="submit"
@@ -233,11 +226,10 @@ export default function BookingModal({ isOpen, onClose, packageDetails }) {
                                 loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors`}
                         >
-                            {loading ? 'Processing...' : (paymentPreference === 'pay-now' ? `Pay KES ${(packageDetails?.price * formData.numberOfAdults).toLocaleString()}` : 'Confirm Booking')}
+                            {loading ? 'Processing...' : (paymentPreference === 'pay-now' ? `Pay KES ${(packageDetails?.price * (parseInt(formData.numberOfAdults) + parseInt(formData.numberOfChildren))).toLocaleString()}` : 'Confirm Booking')}
                         </button>
                     </div>
                 </form>
-            )}
         </motion.div>
       </motion.div>
     </AnimatePresence>
