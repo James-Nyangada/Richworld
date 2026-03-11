@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Cookies from "js-cookie"
 import { cn } from "@/lib/utils"
@@ -31,8 +31,24 @@ const sidebarItems = [
 
 export function DashboardLayout({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [name, setName] = useState("Guest")
+  const [email, setEmail] = useState("")
   const router = useRouter()
   const pathname = usePathname()
+
+    useEffect(() => {
+      const userInfo = Cookies.get("user");
+      if (userInfo) {
+        try {
+          const userDetail = JSON.parse(userInfo);
+          setName(`${userDetail.firstName} ${userDetail.lastName}`);
+          setEmail(userDetail.email || "");
+        } catch (e) {
+          // Invalid cookie data
+        }
+      }
+    }, [])
+
     const handleNavigation = (href) => {
       router.push(href)
     }
@@ -41,13 +57,9 @@ export function DashboardLayout({ children }) {
       const handleLogout = () => {
        Cookies.remove("token", { path: "/" });
         Cookies.remove("role", { path: "/" });
+        Cookies.remove("user", { path: "/" });
         router.push("/login");
       }
-
-    const userInfo = Cookies.get("user");
-    const userDetail = userInfo ? JSON.parse(userInfo) : null;
-    const name = userDetail ? `${userDetail.firstName} ${userDetail.lastName}` : "Guest";
-    const email = userDetail?.email ?? "";
 
   return (
     <div className="flex h-screen bg-background">

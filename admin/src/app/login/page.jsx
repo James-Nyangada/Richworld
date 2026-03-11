@@ -3,6 +3,7 @@ import { useState } from "react";
 import {useRouter} from "next/navigation";
 import { GalleryVerticalEnd } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 import {
   InputOTP,
   InputOTPGroup,
@@ -60,7 +61,9 @@ function SignupForm({ onSwitchToLogin }) {
         userId,
         code: verificationCode
       });
-      alert("Email verified successfully. You may now log in.");
+      toast.success("Email verified successfully", {
+        description: "You may now log in with your credentials.",
+      });
       onSwitchToLogin();
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -71,7 +74,9 @@ function SignupForm({ onSwitchToLogin }) {
     setError("");
     try {
       await axios.post(`${API}/api/auth/resend-code`, { userId });
-      alert("Verification code resent.");
+      toast.success("Verification code resent", {
+        description: "Please check your email for the new code.",
+      });
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -241,7 +246,9 @@ function LoginForm({ onSwitchToSignup }) {
         secure: false,
       });
       
-      alert("Login successful");
+      toast.success("Login successful", {
+        description: "Redirecting to your dashboard...",
+      });
       const role = response.data.user.role;
       if (role === "super-admin") {
         router.push("/super-admin/dashboard");
@@ -254,7 +261,11 @@ function LoginForm({ onSwitchToSignup }) {
         router.push("/unauthorized");
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      const errorMsg = err.response?.data?.message || err.message;
+      setError(errorMsg);
+      toast.error("Login failed", {
+        description: errorMsg,
+      });
     }
   };
 
@@ -297,7 +308,7 @@ function LoginForm({ onSwitchToSignup }) {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
          type="submit"
-          className="bg-[#fb7105] cursor-pointer text-primary-foreground hover:bg-primary/90 inline-flex h-10 w-full items-center cursor-pointer justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          className="bg-[#fb7105] cursor-pointer text-primary-foreground hover:bg-primary/90 inline-flex h-10 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         >
           Log In
         </button>

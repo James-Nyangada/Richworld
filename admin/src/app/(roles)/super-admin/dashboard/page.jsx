@@ -86,8 +86,6 @@ export default function OverviewPage() {
             setTestimonials(res.data)
           } catch (error) {
             console.error("❌ Error fetching testimonials:", error)
-          } finally {
-            setLoading(false)
           }
         }
         fetchTestimonials()
