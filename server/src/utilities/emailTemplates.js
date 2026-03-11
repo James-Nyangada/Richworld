@@ -29,7 +29,7 @@ function baseLayout(title, bodyContent, { showSignature = true } = {}) {
                       RICHWORLD SAFARIS
                     </div>
                     <div style="font-size:11px; color:#a0a0b0; letter-spacing:6px; text-transform:uppercase; margin-top:6px;">
-                      ADVENTURE &bull; LUXURY &bull; DISCOVERY
+                      MAGIC REDEFINED 
                     </div>
                   </td>
                 </tr>
