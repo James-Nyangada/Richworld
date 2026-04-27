@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${reey.variable} font-sans`}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>Loading....</div>}>
           <Navbar />
           <main>{children}</main>
           <Footer />
