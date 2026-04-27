@@ -14,6 +14,7 @@ const cors = require('cors');
 const testimonialRoutes = require("./routes/testimonialRoutes")
 const bookingRoutes = require("./routes/bookingRoutes")
 const mpesaRoutes = require("./routes/mpesaRoutes");
+const galleryRoutes = require("./routes/galleryRoutes");
 
 
 
@@ -70,6 +71,7 @@ app.use("/api/packages", packageRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/mpesa", mpesaRoutes);
+app.use("/api/gallery", galleryRoutes);
 app.use("/api", require("./routes/paymentRoutes")); // Specific paths defined in router
 
 

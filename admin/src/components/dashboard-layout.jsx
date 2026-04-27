@@ -14,6 +14,7 @@ import {
   Plus,
   Settings,
   MessageSquare,
+  ImageIcon,
   ChevronLeft,
   ChevronRight,
   MoreVertical,
@@ -26,6 +27,7 @@ const sidebarItems = [
   { icon: Package, label: "Manage Packages", href: "/super-admin/packages" },
   { icon: Plus, label: "Add Package", href: "/super-admin/packages/add" },
   { icon: MessageSquare, label: "Testimonials", href: "/super-admin/testimonials" },
+  { icon: ImageIcon, label: "Gallery", href: "/super-admin/gallery" },
   { icon: Settings, label: "Settings", href: "/super-admin/settings" },
 ]
 
