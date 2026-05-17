@@ -16,6 +16,22 @@ exports.verifyPayment = async (req, res) => {
         
         // 2. Extract booking ID from reference (format: bookingId_timestamp)
         const bookingId = reference.split('_')[0];
+
+        if (bookingId === 'MANUAL') {
+            if (paymentData.status === 'success') {
+                console.log(`✅ Manual Payment verified: ${reference}`);
+                return res.json({ 
+                    message: "Payment verified successfully", 
+                    paymentStatus: 'paid'
+                });
+            } else {
+                console.log(`❌ Manual Payment verification failed: ${paymentData.status}`);
+                return res.status(400).json({ 
+                    error: "Payment not successful", 
+                    status: paymentData.status 
+                });
+            }
+        }
         
         if (paymentData.status === 'success') {
             // 3. Update booking: confirmed + paid
@@ -80,6 +96,11 @@ exports.webhook = async (req, res) => {
         // Reference format: bookingId_timestamp
         const bookingId = reference.split('_')[0];
         
+        if (bookingId === 'MANUAL') {
+            console.log(`[Webhook] Manual Payment Successful (ref: ${reference})`);
+            return res.sendStatus(200);
+        }
+        
         console.log(`[Webhook] Payment Successful for Booking: ${bookingId} (ref: ${reference})`);
         
         try {
@@ -95,4 +116,57 @@ exports.webhook = async (req, res) => {
     }
 
     res.sendStatus(200); // Always return 200 OK
+};
+
+/**
+ * POST /api/payments/generate-link
+ * Generates a manual payment link for clients
+ */
+exports.generatePaymentLink = async (req, res) => {
+    try {
+        const { amount, email, phone, description } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ error: "Email is required" });
+        }
+
+        // If amount is provided, use initializePayment (specific transaction)
+        // If amount is NOT provided, use createPaymentPage (open amount link)
+        if (amount) {
+            const ref = `MANUAL_${crypto.randomBytes(4).toString('hex')}`;
+            const paymentData = await PaystackService.initializePayment({
+                amount,
+                email,
+                phone,
+                ref,
+                callbackUrl: process.env.APP_BASE_URL ? `${process.env.APP_BASE_URL}` : 'https://richworldsafaris.com'
+            });
+
+            console.log("Paystack Initialize Success:", paymentData.authorization_url);
+
+            return res.json({
+                message: "Specific payment link generated",
+                paymentUrl: paymentData.authorization_url,
+                reference: paymentData.reference
+            });
+        } else {
+            // Open amount link using Payment Page
+            const pageData = await PaystackService.createPaymentPage({
+                name: `Payment for ${email}`,
+                description: description || "Custom payment to Richworld Safaris",
+                email
+            });
+
+            console.log("Paystack Page Success:", pageData.hosted_url || pageData.url);
+
+            return res.json({
+                message: "Open-amount payment link generated",
+                paymentUrl: pageData.hosted_url || pageData.url, // Try hosted_url fallback
+                slug: pageData.slug
+            });
+        }
+    } catch (error) {
+        console.error("Generate Payment Link Error:", error.message);
+        res.status(500).json({ error: "Failed to generate payment link" });
+    }
 };

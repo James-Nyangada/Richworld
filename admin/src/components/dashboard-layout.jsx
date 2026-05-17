@@ -15,6 +15,7 @@ import {
   Settings,
   MessageSquare,
   ImageIcon,
+  FileText,
   ChevronLeft,
   ChevronRight,
   MoreVertical,
@@ -24,6 +25,7 @@ import {
 const sidebarItems = [
   { icon: Home, label: "Overview", href: "/super-admin/dashboard" },
   { icon: Calendar, label: "Bookings", href: "/super-admin/booking" },
+  { icon: FileText, label: "Booking Voucher", href: "/super-admin/booking-voucher" },
   { icon: Package, label: "Manage Packages", href: "/super-admin/packages" },
   { icon: Plus, label: "Add Package", href: "/super-admin/packages/add" },
   { icon: MessageSquare, label: "Testimonials", href: "/super-admin/testimonials" },

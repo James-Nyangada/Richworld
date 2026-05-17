@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { PaymentLinkGenerator } from "@/components/payment-link-generator"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -135,6 +136,11 @@ export default function OverviewPage() {
           <p className="text-muted-foreground">Welcome back! Here's what's happening with your travel business.</p>
         </div>
 
+        {/* Payment Link Generator */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <PaymentLinkGenerator />
+        </div>
+
         {/* Key Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="hover:shadow-lg transition-shadow duration-200">
@@ -234,6 +240,7 @@ export default function OverviewPage() {
             </div>
           </CardContent>
         </Card>
+
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -65,3 +65,22 @@ exports.verifyPayment = async (reference) => {
         throw new Error("Payment verification failed");
     }
 };
+/**
+ * 3. Create Payment Page
+ * For open-amount payments
+ */
+exports.createPaymentPage = async (data) => {
+    try {
+        const { name, description, amount, email } = data;
+        const response = await api.post('/page', {
+            name: name || "Payment to Richworld Safaris",
+            description: description || "Custom Payment",
+            amount: amount ? Math.ceil(amount * 100) : undefined, // Open amount if not provided
+            // collect_phone: true
+        });
+        return response.data.data; // Contains { name, slug, url, ... }
+    } catch (error) {
+        console.error("Paystack Page Error:", error.response?.data || error.message);
+        throw new Error("Failed to create payment page");
+    }
+};

@@ -15,6 +15,7 @@ const testimonialRoutes = require("./routes/testimonialRoutes")
 const bookingRoutes = require("./routes/bookingRoutes")
 const mpesaRoutes = require("./routes/mpesaRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
+const bookingVoucherRoutes = require("./routes/bookingVoucherRoutes");
 
 
 
@@ -72,6 +73,7 @@ app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/mpesa", mpesaRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api/booking-vouchers", bookingVoucherRoutes);
 app.use("/api", require("./routes/paymentRoutes")); // Specific paths defined in router
 
 
