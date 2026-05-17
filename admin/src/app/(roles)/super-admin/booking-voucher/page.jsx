@@ -370,7 +370,7 @@ export default function BookingVoucherPage() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground">From *</label>
-                  <Input required value={form.from} onChange={e => handleChange("from", e.target.value)} placeholder="e.g. Nairobi" />
+                  <Input required value={form.from} onChange={e => handleChange("from", e.target.value)} placeholder="e.g. Ken Mumo" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground">Guest Name *</label>
@@ -411,15 +411,15 @@ export default function BookingVoucherPage() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground">No. of Rooms *</label>
-                  <Input required type="number" min="1" value={form.numberOfRooms} onChange={e => handleChange("numberOfRooms", parseInt(e.target.value) || 1)} />
+                  <Input required type="number" min="0" value={form.numberOfRooms} onChange={e => handleChange("numberOfRooms", e.target.value === "" ? "" : parseInt(e.target.value))} />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground">No. of Adults *</label>
-                  <Input required type="number" min="1" value={form.numberOfAdults} onChange={e => handleChange("numberOfAdults", parseInt(e.target.value) || 1)} />
+                  <Input required type="number" min="0" value={form.numberOfAdults} onChange={e => handleChange("numberOfAdults", e.target.value === "" ? "" : parseInt(e.target.value))} />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground">No. of Children</label>
-                  <Input type="number" min="0" value={form.numberOfChildren} onChange={e => handleChange("numberOfChildren", parseInt(e.target.value) || 0)} />
+                  <Input type="number" min="0" value={form.numberOfChildren} onChange={e => handleChange("numberOfChildren", e.target.value === "" ? "" : parseInt(e.target.value))} />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground">No. of Nights</label>

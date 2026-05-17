@@ -52,12 +52,12 @@ const bookingVoucherSchema = new mongoose.Schema(
     numberOfRooms: {
       type: Number,
       required: true,
-      min: 1,
+      min: 0,
     },
     numberOfAdults: {
       type: Number,
       required: true,
-      min: 1,
+      min: 0,
     },
     numberOfChildren: {
       type: Number,
