@@ -134,7 +134,7 @@ useEffect(() => {
               <button
                 key={category}
                 onClick={() => setSelectedFilter(category)}
-                className={`px-4 py-2 rounded-full font-medium transition-colors duration-200 ${
+                className={`px-6 py-2.5 rounded-lg font-medium transition-colors duration-200 ${
                   selectedFilter === category
                     ? "bg-blue-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -251,7 +251,7 @@ useEffect(() => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 10 }}
                           transition={{ duration: 0.2 }}
-                          className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full font-medium transition-colors duration-200 flex items-center justify-center text-sm"
+                          className="bg-gray-700 hover:bg-gray-600 text-white py-2.5 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
                         >
                           <ArrowRight className="mr-2" size={14} />
                           More Information
@@ -271,7 +271,7 @@ useEffect(() => {
             <div className="text-center mt-12">
               <button
                 onClick={handleViewMore}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold flex items-center mx-auto"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-lg font-semibold flex items-center mx-auto"
               >
                 View More Packages
                 <ArrowRight className="ml-2" size={20} />

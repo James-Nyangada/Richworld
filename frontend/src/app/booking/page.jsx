@@ -541,7 +541,7 @@ const [currentStep, setCurrentStep] = useState(1)
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="px-8 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors duration-300"
+                  className="px-8 py-3.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-300"
                 >
                   Previous
                 </button>
@@ -551,7 +551,7 @@ const [currentStep, setCurrentStep] = useState(1)
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="px-8 py-3 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors duration-300 ml-auto"
+                  className="px-8 py-3.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors duration-300 ml-auto"
                 >
                   Next Step
                 </button>
@@ -559,7 +559,7 @@ const [currentStep, setCurrentStep] = useState(1)
                   <button
                   type="submit"
                   disabled={!formData.paymentOption || processingPayment}
-                  className={`px-12 py-4 rounded-xl font-semibold text-lg shadow-lg ml-auto transition-all duration-300 transform hover:scale-105 ${
+                  className={`px-12 py-5 rounded-lg font-semibold text-lg shadow-lg ml-auto transition-all duration-300 transform hover:scale-105 ${
                     formData.paymentOption && !processingPayment
                       ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700' 
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'

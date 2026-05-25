@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import TrustBar from "./TrustBar"
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -46,7 +47,7 @@ export default function Hero() {
           <div
             className="w-full h-full bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${slides[currentSlide].image})`,
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${slides[currentSlide].image})`,
             }}
           />
         </motion.div>
@@ -66,13 +67,13 @@ export default function Hero() {
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-reey mb-6 text-balance">
                 {slides[currentSlide].title}
               </h1>
-              <p className="text-lg md:text-xl lg:text-2xl font-light mb-8 text-balance">
+              <p className="text-lg md:text-xl lg:text-2xl font-light mb-8 text-white text-balance">
                 {slides[currentSlide].subtitle}
               </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-medium transition-colors duration-200"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3.5 rounded-lg text-lg font-bold transition-colors duration-200 shadow-lg"
               >
                 Start Your Adventure
               </motion.button>
@@ -92,6 +93,11 @@ export default function Hero() {
             }`}
           />
         ))}
+      </div>
+
+      {/* TrustBar Integrated at Bottom */}
+      <div className="absolute bottom-0 w-full z-20">
+        <TrustBar />
       </div>
     </section>
   )

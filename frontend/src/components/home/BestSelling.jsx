@@ -42,9 +42,8 @@ export default function BestSelling() {
           <motion.h2
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl lg:text-6xl font-reey text-red-600"
+            className="text-4xl md:text-5xl lg:text-6xl font-reey text-red-600 mb-2"
           >
             Best Selling Destinations
           </motion.h2>
@@ -79,6 +78,7 @@ export default function BestSelling() {
             // rating guard (0..5)
             const rating = Math.max(0, Math.min(5, Number(pkg.rating) || 5))
 
+            
             return (
               <motion.a
                 key={pkgId}
@@ -89,66 +89,46 @@ export default function BestSelling() {
                 viewport={{ once: true }}
                 onMouseEnter={() => setHoveredCard(pkgId)}
                 onMouseLeave={() => setHoveredCard(null)}
-                className="relative group cursor-pointer"
+                className="relative group cursor-pointer h-[400px] rounded-3xl overflow-hidden block shadow-lg group-hover:shadow-xl transition-all duration-300"
               >
-                <div className="bg-gray-900 rounded-3xl overflow-hidden shadow-lg transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  {/* Image */}
-                  <div className="relative h-56 overflow-hidden">
-                    <img
-                      src={firstImage}
-                      alt={pkg.name || "Package image"}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
+                {/* Background Image */}
+                <img
+                  src={firstImage}
+                  alt={pkg.name || "Package image"}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
 
-                    {/* Hover Icons */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: hoveredCard === pkgId ? 1 : 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="absolute top-4 right-4 flex flex-col space-y-2"
-                    >
-                      <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
-                        <Heart className="text-white" size={20} />
-                      </div>
-                      <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
-                        <ImageIcon className="text-white" size={20} />
-                      </div>
-                    </motion.div>
-                  </div>
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 group-hover:from-black group-hover:via-black/50 transition-colors duration-500"></div>
 
-                  {/* Content */}
-                  <div className="p-5 text-white">
-                    {/* Rating and Duration */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-1">
-                        {[...Array(rating)].map((_, i) => (
-                          <Star key={i} className="text-yellow-400 fill-current" size={16} />
-                        ))}
-                        <span className="text-gray-300 text-sm ml-1">({pkg.reviews ?? 0})</span>
-                      </div>
-                      <div className="flex items-center text-gray-300 text-sm">
-                        <Clock size={16} className="mr-1" />
-                        {pkg.duration ?? pkg.days ?? "N/A"}
-                      </div>
-                    </div>
+                {/* Top Elements */}
+                <div className="absolute top-5 left-5">
+                  <span className="bg-[#a39a4d] text-white text-xs font-bold px-2.5 py-1 rounded-sm tracking-wide">
+                    POPULAR
+                  </span>
+                </div>
+                <div className="absolute top-5 right-5 text-white text-sm drop-shadow-md">
+                  From <span className="font-bold text-xl ml-1">KES {pkg.price || "2060"}</span>
+                </div>
 
-                    {/* Destination Name */}
-                    <h3 className="text-xl font-bold mb-2">{pkg.name || pkg.title || "Untitled Package"}</h3>
+                {/* Bottom Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 flex flex-col justify-end">
+                  {/* Locations / Destinations */}
+                  <p className="text-gray-200 text-sm mb-2 line-clamp-1 drop-shadow-md">
+                    {Array.isArray(pkg.destinations) 
+                      ? pkg.destinations.join(" | ") 
+                      : (pkg.destinations || pkg.locations || "")}
+                  </p>
 
-                    <AnimatePresence>
-                      {hoveredCard === pkgId && (
-                        <motion.button
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          transition={{ duration: 0.2 }}
-                          className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full font-medium transition-colors duration-200 flex items-center justify-center text-sm"
-                        >
-                          <ArrowRight className="mr-2" size={14} />
-                          More Information
-                        </motion.button>
-                      )}
-                    </AnimatePresence>
+                  {/* Title */}
+                  <h3 className="text-white text-2xl font-bold mb-3 leading-snug drop-shadow-md line-clamp-2">
+                    {pkg.name || pkg.title || "Untitled Package"}
+                  </h3>
+
+                  {/* Duration */}
+                  <div className="flex items-center text-white text-sm font-medium drop-shadow-md">
+                    <Clock size={16} className="mr-1.5" />
+                    {pkg.duration || pkg.days || "7 days"}
                   </div>
                 </div>
               </motion.a>

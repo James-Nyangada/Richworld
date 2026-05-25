@@ -187,7 +187,7 @@ export default function PackageDetailPage() {
 
                 <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all hover:scale-[1.02]"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-lg shadow-lg shadow-blue-200 transition-all hover:scale-[1.02]"
                 >
                     Book Now
                 </button>

@@ -79,7 +79,7 @@ export default function Navbar() {
             transition={{ delay: 0.2 }}
             className="hidden lg:block"
           >
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200" onClick={() => (window.location.href = "/booking")}>
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200" onClick={() => (window.location.href = "/booking")}>
               Book Your Trip Today
             </button>
           </motion.div>
@@ -126,7 +126,7 @@ export default function Navbar() {
                 transition={{ delay: navLinks.length * 0.1 }}
                 className="px-3 py-2"
               >
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200">
+                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200">
                   Book Your Trip Today
                 </button>
               </motion.div>

@@ -68,40 +68,37 @@ export default function BestDeals() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="relative h-80 rounded-2xl overflow-hidden group cursor-pointer"
+                className="relative h-[400px] rounded-3xl overflow-hidden block shadow-lg group-hover:shadow-xl transition-all duration-300 group cursor-pointer"
               >
                 <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                   style={{ backgroundImage: `url(${deal.image})` }}
                 />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300" />
+                
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 group-hover:from-black group-hover:via-black/50 transition-colors duration-500"></div>
 
                 {deal.badge && (
-                  <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <span className="text-white text-xs font-medium">{deal.badge}</span>
+                  <div className="absolute top-5 left-5">
+                    <span className="bg-[#a39a4d] text-white text-xs font-bold px-2.5 py-1 rounded-sm tracking-wide">
+                      {deal.badge}
+                    </span>
                   </div>
                 )}
 
-                <div className="absolute inset-0 p-6 flex flex-col justify-between text-white">
+                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 flex flex-col justify-end text-white">
+                  <p className="text-gray-200 text-sm mb-2 line-clamp-2 drop-shadow-md">{deal.description}</p>
+                  <h3 className="text-white text-2xl font-bold mb-4 leading-snug drop-shadow-md">{deal.title}</h3>
+                  
                   <div>
-                    <p className="text-xs font-medium mb-4 leading-relaxed opacity-90">{deal.description}</p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-2xl font-bold mb-4">{deal.title}</h3>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-black/50 backdrop-blur-sm hover:bg-black/70 px-6 py-2 rounded-full text-sm font-medium transition-colors duration-300 flex items-center gap-2"
+                      className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors duration-300 flex items-center gap-2"
                     >
                       <span>Book Now</span>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
                     </motion.button>
                   </div>
@@ -120,34 +117,29 @@ export default function BestDeals() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: (index + 3) * 0.1 }}
                 viewport={{ once: true }}
-                className="relative h-80 rounded-2xl overflow-hidden group cursor-pointer"
+                className="relative h-[400px] rounded-3xl overflow-hidden block shadow-lg group-hover:shadow-xl transition-all duration-300 group cursor-pointer"
               >
                 <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                   style={{ backgroundImage: `url(${deal.image})` }}
                 />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300" />
+                
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20 group-hover:from-black group-hover:via-black/50 transition-colors duration-500"></div>
 
-                <div className="absolute inset-0 p-6 flex flex-col justify-between text-white">
+                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6 flex flex-col justify-end text-white">
+                  <p className="text-gray-200 text-sm mb-2 line-clamp-2 drop-shadow-md">{deal.description}</p>
+                  <h3 className="text-white text-3xl font-bold mb-4 leading-snug drop-shadow-md">{deal.title}</h3>
+                  
                   <div>
-                    <p className="text-xs font-medium mb-4 leading-relaxed opacity-90">{deal.description}</p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-3xl font-bold mb-4">{deal.title}</h3>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-black/50 backdrop-blur-sm hover:bg-black/70 px-6 py-2 rounded-full text-sm font-medium transition-colors duration-300 flex items-center gap-2"
+                      className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors duration-300 flex items-center gap-2"
                     >
                       <span>Book Now</span>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
                     </motion.button>
                   </div>

@@ -33,7 +33,7 @@ export default function WhyBookWithUs() {
             viewport={{ once: true }}
           >
             <h2 className="font-reey text-5xl md:text-6xl lg:text-7xl text-red-800 leading-tight">
-              Why book with Richworld Safaris
+              Why Book With Us?
             </h2>
           </motion.div>
 

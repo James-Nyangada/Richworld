@@ -73,7 +73,7 @@ export default function Footer() {
               <p>Address: P.O. Box 823, Thika, Kenya</p>
               <p>Email: info@richworldsafaris.com</p>
               <p>Website: www.richworldsafaris.com</p>
-              <button className="mt-3 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"  onClick={() => (window.location.href = "https://wa.me/+254706770371?text=Hello! I'm interested in your safari packages. Can you help me plan my adventure")}>
+              <button className="mt-3 bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200"  onClick={() => (window.location.href = "https://wa.me/+254706770371?text=Hello! I'm interested in your safari packages. Can you help me plan my adventure")}>
                 WhatsApp Chat
               </button>
             </div>
