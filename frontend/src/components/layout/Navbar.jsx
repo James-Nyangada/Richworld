@@ -11,7 +11,7 @@ export default function Navbar() {
   const pathname = usePathname()
   
   // Pages that have a Hero section and start transparent
-  const HERO_PAGES = ["/", "/about", "/contact", "/packages", "/booking"]
+  const HERO_PAGES = ["/", "/about", "/contact", "/packages", "/booking", "/gallery"]
   const isHeroPage = HERO_PAGES.includes(pathname)
 
   useEffect(() => {
@@ -27,6 +27,7 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     { name: "About Us", href: "/about" },
     { name: "Packages and Tours", href: "/packages" },
+    { name: "Gallery", href: "/gallery" },
     { name: "Contact Us", href: "/contact" },
   ]
 
